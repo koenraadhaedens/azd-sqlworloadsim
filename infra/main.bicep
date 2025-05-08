@@ -17,13 +17,17 @@ var tags = {
   'azd-env-name': environmentName
 }
 
+
+var uniqueStorageName = toLower('${environmentName}storage${uniqueString(subscription().id, environmentName)}')
+
+
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: 'rg-${environmentName}'
   location: location
   tags: tags
 }
 
-param storageAccountName string = 'mystorageaccount'
+
 param sqlAdminUsername string = 'sqladmin'
 param sqlDatabaseName string = 'adventureworks2017'
 
@@ -31,7 +35,7 @@ param sqlDatabaseName string = 'adventureworks2017'
 module storageModule './modules/storage.bicep' = {
   name: 'storageDeployment'
   params: {
-    storageAccountName: storageAccountName
+    storageAccountName: uniqueStorageName
     location: location
   }
   scope: rg
@@ -46,6 +50,9 @@ module sqlVmModule './modules/sqlvm.bicep' = {
     sqlAdminUsername: sqlAdminUsername
     sqlAdminPassword: winVMPassword
     location: location
+    storageAccountName: storageModule.outputs.storageAccountName
+    sasToken: storageModule.outputs.sasToken
+    
     
   }
   scope: rg
@@ -66,3 +73,6 @@ module sqlDbModule './modules/sqlDatabase.bicep' = {
   }
   scope: rg
 }
+
+
+

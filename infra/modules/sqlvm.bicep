@@ -2,6 +2,10 @@ param sqlAdminUsername string
 @secure()
 param sqlAdminPassword string
 param location string = resourceGroup().location
+param storageAccountName string
+@secure()
+param sasToken string
+
 
 resource sqlVm 'Microsoft.Compute/virtualMachines@2021-07-01' = {
   name: 'sqlVm'
@@ -49,7 +53,10 @@ resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@202
       fileUris: [
         'https://raw.githubusercontent.com/koenraadhaedens/azd-sqlworloadsim/refs/heads/main/infra/uploadAndImportBacpac.ps1'
       ]
-      commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File uploadAndImportBacpac.ps1'
+    }
+    protectedSettings: { commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File uploadAndImportBacpac.ps1 -storageAccountName ${storageAccountName} -sasToken ${sasToken}'
+    }  
+      
     }
   }
-}
+
