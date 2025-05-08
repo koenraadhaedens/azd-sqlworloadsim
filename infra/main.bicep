@@ -30,7 +30,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 module sqlServerModule './sqlserver.bicep' = {
   name: 'deploySqlServer'
   params: {
-    sqlServerName: 'your-sqlserver'
+    sqlServerName: 'sqlserver-${environmentName}'
     adminLogin: 'sqladminuser'
     adminPassword: winVMPassword
   }
