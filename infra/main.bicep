@@ -39,16 +39,24 @@ module storageModule './modules/storage.bicep' = {
 
 module sqlVmModule './modules/sqlvm.bicep' = {
   name: 'sqlVmDeployment'
+  dependsOn: [
+    storageModule
+  ]
   params: {
     sqlAdminUsername: sqlAdminUsername
     sqlAdminPassword: winVMPassword
     location: location
+    
   }
   scope: rg
 }
 
 module sqlDbModule './modules/sqlDatabase.bicep' = {
   name: 'sqlDatabaseDeployment'
+  dependsOn: [
+    storageModule
+    sqlVmModule
+  ]
   params: {
     sqlServerName: 'my-sql-server'
     sqlAdminUsername: sqlAdminUsername
