@@ -18,7 +18,6 @@ var tags = {
 }
 
 
-var uniqueStorageName = toLower('${environmentName}${uniqueString(subscription().id)}')
 
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -28,51 +27,30 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 }
 
 
-param sqlAdminUsername string = 'sqladmin'
-param sqlDatabaseName string = 'adventureworks2017'
-
-
-module storageModule './modules/storage.bicep' = {
-  name: 'storageDeployment'
+module sqlServerModule './sqlserver.bicep' = {
+  name: 'deploySqlServer'
   params: {
-    storageAccountName: uniqueStorageName
-    location: location
+    sqlServerName: 'your-sqlserver'
+    adminLogin: 'sqladminuser'
+    adminPassword: winVMPassword
   }
   scope: rg
 }
 
-module sqlVmModule './modules/sqlvm.bicep' = {
-  name: 'sqlVmDeployment'
+module vmModule './sqlvm.bicep' = {
+  name: 'deploySqlVM'
+  params: {
+    vmName: 'sqlimportvm'
+    adminUsername: 'vmadmin'
+    adminPassword: 'your-vm-password'
+    bacpacStorageUrl: 'https://github.com/koenraadhaedens/azd-sqlworloadsim/raw/refs/heads/main/media/adventureworks2017.bacpac'
+    targetSqlServer: sqlServerModule.outputs.sqlServerFqdn
+    targetDb: 'AdventureWorks2017'
+    sqlAdmin: 'sqladminuser'
+    sqlPassword: winVMPassword
+  }
   dependsOn: [
-    storageModule
+    sqlServerModule
   ]
-  params: {
-    sqlAdminUsername: sqlAdminUsername
-    sqlAdminPassword: winVMPassword
-    location: location
-    storageAccountName: storageModule.outputs.storageAccountName
-    sasToken: storageModule.outputs.sasToken
-    
-    
-  }
   scope: rg
 }
-
-module sqlDbModule './modules/sqlDatabase.bicep' = {
-  name: 'sqlDatabaseDeployment'
-  dependsOn: [
-    storageModule
-    sqlVmModule
-  ]
-  params: {
-    sqlServerName: 'my-sql-server'
-    sqlAdminUsername: sqlAdminUsername
-    sqlAdminPassword: winVMPassword
-    sqlDatabaseName: sqlDatabaseName
-    location: location
-  }
-  scope: rg
-}
-
-
-
