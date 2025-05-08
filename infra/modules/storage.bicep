@@ -49,5 +49,6 @@ resource generateSasScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = 
   }
 }
 
+
 output sasToken string = generateSasScript.properties.outputs.sasToken
 output storageAccountName string = storageAccount.name

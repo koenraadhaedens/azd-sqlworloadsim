@@ -18,7 +18,7 @@ var tags = {
 }
 
 
-var uniqueStorageName = toLower('${environmentName}storage${uniqueString(subscription().id, environmentName)}')
+var uniqueStorageName = toLower('${environmentName}${uniqueString(subscription().id)}')
 
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
