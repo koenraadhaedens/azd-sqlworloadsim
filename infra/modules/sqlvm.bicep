@@ -47,7 +47,7 @@ resource customScriptExtension 'Microsoft.Compute/virtualMachines/extensions@202
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [
-        'https://raw.githubusercontent.com/<username>/<repo>/<branch>/uploadAndImportBacpac.ps1'
+        'https://raw.githubusercontent.com/koenraadhaedens/azd-sqlworloadsim/refs/heads/main/infra/uploadAndImportBacpac.ps1'
       ]
       commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File uploadAndImportBacpac.ps1'
     }
