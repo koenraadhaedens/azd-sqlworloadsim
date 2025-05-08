@@ -97,7 +97,7 @@ resource scriptExt 'Microsoft.Compute/virtualMachines/extensions@2021-07-01' = {
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [
-        'https://raw.githubusercontent.com/koenraadhaedens/azd-sqlworloadsim/main/scripts/deploy-bacpac.ps1'
+        'https://github.com/koenraadhaedens/azd-sqlworloadsim/blob/856d204055b1a3b8342ea590f64bd901b65da2e5/infra/deploy-bacpac.ps1'
       ]
     }
     protectedSettings: {
